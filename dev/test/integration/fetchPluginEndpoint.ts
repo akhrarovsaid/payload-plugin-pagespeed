@@ -3,10 +3,10 @@ import type { Payload, PayloadRequest } from 'payload'
 import config from '@payload-config'
 import { createPayloadRequest } from 'payload'
 
-import { fetchPageSpeedReport } from '../../src/endpoints/pagespeed/fetchPageSpeedReport.js'
-import { pageSpeedEndpointHandler } from '../../src/endpoints/pagespeed/handler.js'
-import { getMockFetchReportFn } from '../test/mock/fetchReport.js'
-import { insightsSlug, reportsSlug } from './defaults.js'
+import { fetchPageSpeedReport } from '../../../src/endpoints/pagespeed/fetchPageSpeedReport.js'
+import { pageSpeedEndpointHandler } from '../../../src/endpoints/pagespeed/handler.js'
+import { insightsSlug, reportsSlug } from '../../helpers/defaults.js'
+import { getMockFetchReportFn } from '../mock/fetchReport.js'
 import { login } from './login.js'
 
 export async function fetchPluginEndpoint({

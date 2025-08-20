@@ -4,13 +4,16 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 
-import { PageSpeedStrategies } from '../../src/utilities/pageSpeedStrategies.js'
-import { insightsSlug, reportsSlug } from '../helpers/defaults.js'
-import { fetchPluginEndpoint } from '../helpers/fetchPluginEndpoint.js'
-import { seed } from '../seed.js'
+import { PageSpeedStrategies } from '../../../src/utilities/pageSpeedStrategies.js'
+import { insightsSlug, reportsSlug } from '../../helpers/defaults.js'
+import { seed } from '../../seed.js'
+import { fetchPluginEndpoint } from './fetchPluginEndpoint.js'
 
 let payload: Payload
 
+/**
+ * TODO: Better test coverage
+ */
 describe('Plugin integration tests', () => {
   beforeAll(async () => {
     payload = await getPayload({ config })
