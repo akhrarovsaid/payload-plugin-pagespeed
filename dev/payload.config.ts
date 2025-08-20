@@ -1,16 +1,14 @@
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { s3Storage } from '@payloadcms/storage-s3'
-import { MongoMemoryReplSet } from 'mongodb-memory-server'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { pageSpeedPlugin } from 'payload-plugin-pagespeed'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
-import { seed } from './seed.js'
-/* import { devUser } from './helpers/credentials.js' */
 import { testEmailAdapter } from './helpers/testEmailAdapter.js'
+/* import { getMemoryDB } from './helpers/getMemoryDB.js' */
+import { seed } from './seed.js'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,23 +18,13 @@ if (!process.env.ROOT_DIR) {
 }
 
 const buildConfigWithMemoryDB = async () => {
-  if (process.env.NODE_ENV === 'test') {
-    const memoryDB = await MongoMemoryReplSet.create({
-      replSet: {
-        count: 3,
-        dbName: 'payloadmemory',
-      },
-    })
-
-    process.env.DATABASE_URI = `${memoryDB.getUri()}&retryWrites=true`
-  }
-
+  // TODO: Fix this in tests
+  // if (process.env.NODE_ENV === 'test') {
+  //   const memoryDB = await getMemoryDB()
+  //   process.env.DATABASE_URI = `${memoryDB.getUri()}&retryWrites=true`
+  // }
   return buildConfig({
     admin: {
-      /* autoLogin: {
-        email: devUser.email,
-        password: devUser.password,
-      }, */
       importMap: {
         baseDir: path.resolve(dirname),
       },
@@ -65,21 +53,8 @@ const buildConfigWithMemoryDB = async () => {
     },
     plugins: [
       pageSpeedPlugin({
-        apiKey: process.env.PAGESPEED_API_KEY || 'test',
-      }),
-      s3Storage({
-        bucket: process.env.S3_BUCKET || '',
-        collections: {
-          'pagespeed-reports': true,
-        },
-        config: {
-          credentials: {
-            accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-            secretAccessKey: process.env.S3_SECRET || '',
-          },
-          endpoint: process.env.S3_ENDPOINT || '',
-          region: process.env.S3_REGION || '',
-        },
+        apiKey: process.env.PAGESPEED_API_KEY || 'fake-api-key',
+        debug: true,
       }),
     ],
     secret: process.env.PAYLOAD_SECRET || 'test-secret_key',
