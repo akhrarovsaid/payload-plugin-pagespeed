@@ -5,7 +5,7 @@ import type { PageSpeedStrategy } from '../../../utilities/pageSpeedStrategies.j
 import { PageSpeedStrategies } from '../../../utilities/pageSpeedStrategies.js'
 
 export const populateUseAsTitle: CollectionBeforeChangeHook = ({ data, operation }) => {
-  if (operation !== 'create') {
+  if (operation !== 'create' || typeof data.title !== 'undefined') {
     return data
   }
 
