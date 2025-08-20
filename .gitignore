@@ -41,6 +41,7 @@ yarn-error.log*
 .env
 
 /dev/media
+/pagespeed-reports/*
 
 # Playwright
 /test-results/
