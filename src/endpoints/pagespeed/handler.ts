@@ -1,7 +1,10 @@
 import {
+  commitTransaction,
   getAccessResults,
   headersWithCors,
+  initTransaction,
   type JsonObject,
+  killTransaction,
   type PayloadRequest,
   type TypeWithID,
 } from 'payload'
@@ -42,6 +45,8 @@ export const pageSpeedEndpointHandler = async ({
     )
   }
 
+  await initTransaction(req)
+
   const accessResults = await getAccessResults({ req })
   const collectionAccessResult = accessResults.collections?.[insightsSlug]
   const hasPermissions = collectionAccessResult?.create && collectionAccessResult?.read
@@ -60,15 +65,14 @@ export const pageSpeedEndpointHandler = async ({
 
   if (hasExistingDoc) {
     try {
-      if (typeof id === 'string' || typeof id === 'number') {
-        doc = await payload.findByID({
-          id,
-          collection: insightsSlug,
-          depth: 0,
-          req,
-        })
-      }
+      doc = await payload.findByID({
+        id,
+        collection: insightsSlug,
+        depth: 0,
+        req,
+      })
     } catch (err) {
+      await killTransaction(req)
       const error = err as Error
       payload.logger.error(error)
       return Response.json({ message: req.t('error:notFound') }, { headers, status: 404 })
@@ -99,28 +103,34 @@ export const pageSpeedEndpointHandler = async ({
     })
 
     if (status === 'error') {
+      await killTransaction(req)
       return Response.json({ message }, { headers, status: 400 })
     }
 
     report = reportFromApi
   } catch (err) {
+    await killTransaction(req)
     const error = err as Error
     payload.logger.error(error)
-    return Response.json({ message: req.t('error:unknown') }, { headers, status: 500 })
+    return Response.json(
+      { error: { message: error.message }, message: req.t('error:unknown') },
+      { headers, status: 500 },
+    )
   }
 
   if (!report) {
-    return Response.json({ message: req.t('error:unknown') }, { headers, status: 500 })
+    await killTransaction(req)
+    return Response.json({ message: req.t('error:documentNotFound') }, { headers, status: 404 })
   }
 
+  let reportDoc: TypeWithID | undefined = undefined
   if (hasExistingDoc) {
-    let reportId: number | string | undefined = undefined
     try {
       const timestamp = report['analysisUTCTimestamp']
       const requestedUrl = report['id']
       const uploadBuffer: Buffer = await gzipPromise(Buffer.from(JSON.stringify(report)))
 
-      const reportDoc = await payload.create({
+      reportDoc = await payload.create({
         collection: reportsSlug,
         data: {},
         file: {
@@ -135,9 +145,8 @@ export const pageSpeedEndpointHandler = async ({
         },
         req,
       })
-
-      reportId = reportDoc.id
     } catch (err) {
+      await killTransaction(req)
       const error = err as Error
       payload.logger.error(error)
       return Response.json(
@@ -151,17 +160,19 @@ export const pageSpeedEndpointHandler = async ({
         id,
         collection: insightsSlug,
         data: {
-          report: reportId,
+          report: reportDoc,
         },
-        depth: 0,
         req,
       })
     } catch (err) {
+      await killTransaction(req)
       const error = err as Error
       payload.logger.error(error)
       return Response.json({ message: req.t('error:unknown') }, { headers, status: 500 })
     }
   }
+
+  await commitTransaction(req)
 
   return Response.json({ message: req.t('general:success'), report })
 }
