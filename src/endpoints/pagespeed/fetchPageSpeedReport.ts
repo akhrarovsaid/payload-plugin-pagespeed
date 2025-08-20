@@ -1,4 +1,4 @@
-import type { JsonObject, PayloadRequest } from 'payload'
+import type { PayloadRequest } from 'payload'
 
 import type { PageSpeedReportObject } from '../../types/pagespeed.js'
 
@@ -25,17 +25,13 @@ export const fetchPageSpeedReport: FetchPageSpeedReportFn = async ({
 }) => {
   const apiUrl = `${DEFAULT_PAGESPEED_API_URL}?key=${apiKey}&${queryString}`
   const apiRes = await fetch(apiUrl)
-
-  let body: JsonObject | undefined
-  try {
-    body = await apiRes.json()
-  } catch {
-    body = undefined
-  }
+  const body = await apiRes.json()
 
   if (!apiRes.ok) {
+    const { message = req.t('error:unknown') } = body.error
+    req.payload.logger.error(message)
     return {
-      message: body?.message ?? req.t('error:unknown'),
+      message,
       status: 'error',
     }
   }
