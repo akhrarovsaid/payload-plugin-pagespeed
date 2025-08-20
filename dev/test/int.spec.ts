@@ -1,32 +1,34 @@
-import type { Payload, PayloadRequest } from 'payload'
+import type { Payload } from 'payload'
 
 import config from '@payload-config'
-import { devUser } from 'helpers/credentials.js'
-import { createPayloadRequest, getPayload } from 'payload'
-import { afterAll, beforeAll, /* beforeEach,  */ describe, expect, test } from 'vitest'
+import { getPayload } from 'payload'
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 
-import { pageSpeedEndpointHandler } from '../../src/endpoints/pagespeed/handler.js'
+import { PageSpeedStrategies } from '../../src/utilities/pageSpeedStrategies.js'
 import { insightsSlug, reportsSlug } from '../helpers/defaults.js'
-import { getMockFetchReportFn } from './mock/fetchReport.js'
+import { fetchPluginEndpoint } from '../helpers/fetchPluginEndpoint.js'
+import { seed } from '../seed.js'
 
 let payload: Payload
 
-afterAll(async () => {
-  await payload.destroy()
-})
-
-beforeAll(async () => {
-  payload = await getPayload({ config })
-})
-
-/* beforeEach(async () => {
-  // seed
-}) */
-
 describe('Plugin integration tests', () => {
+  beforeAll(async () => {
+    payload = await getPayload({ config })
+  })
+
+  afterAll(async () => {
+    if (payload) {
+      await payload.destroy()
+    }
+  })
+
+  beforeEach(async () => {
+    await seed(payload, true)
+  })
+
   describe('endpoint', () => {
-    test('should return error if no api key provided', async () => {
-      const response = await fetchReportEndpoint({ mockRequestFn: false, payload })
+    test('should return error if no api key provided in config', async () => {
+      const response = await fetchPluginEndpoint({ apiKey: '', payload })
       expect(response.status).toBe(400)
       const data = await response.json()
       expect(data).toMatchObject({
@@ -35,7 +37,11 @@ describe('Plugin integration tests', () => {
     })
 
     test('should return unauthorized if request does not have read and create access', async () => {
-      const response = await fetchReportEndpoint({ payload, unauthenticated: true })
+      const response = await fetchPluginEndpoint({
+        apiKey: 'fake-api-key',
+        payload,
+        unauthenticated: true,
+      })
       expect(response.status).toBe(401)
       const data = await response.json()
       expect(data).toMatchObject({
@@ -43,8 +49,8 @@ describe('Plugin integration tests', () => {
       })
     })
 
-    test.skip('should create report doc in endpoint', async () => {
-      /* const insightsDoc = await payload.create({
+    test('should create report doc in endpoint', async () => {
+      const insightsDoc = await payload.create({
         collection: insightsSlug,
         data: {
           url: 'http://localhost:3000',
@@ -52,92 +58,114 @@ describe('Plugin integration tests', () => {
         depth: 0,
       })
 
+      expect(insightsDoc).toBeTruthy()
       expect(insightsDoc.report).toEqual(undefined)
 
-      const response = await fetchReportEndpoint({ docId: insightsDoc.id, payload })
+      const response = await fetchPluginEndpoint({ docId: insightsDoc.id, payload })
 
       expect(response.status).toBe(200)
 
-      const originalDoc = await payload.findByID({
+      const updatedDoc = await payload.findByID({
         id: insightsDoc.id,
         collection: insightsSlug,
         depth: 0,
       })
 
-      expect(originalDoc.report).not.toBe(undefined) */
+      expect(updatedDoc.report).toBeTruthy()
     })
 
-    test.skip('should return existing report doc if one exists in insight doc', async () => {
-      /* const request = new Request('http://localhost:3000/api/my-plugin-endpoint', {
-        method: 'GET',
+    test('should return existing report doc if one exists in insight doc', async () => {
+      const insightsDoc = await payload.create({
+        collection: insightsSlug,
+        data: {
+          url: 'http://localhost:3000',
+        },
+        depth: 0,
       })
 
-      const payloadRequest = await createPayloadRequest({ config, request })
-      const response = await customEndpointHandler(payloadRequest)
+      expect(insightsDoc).toBeTruthy()
+
+      const response = await fetchPluginEndpoint({ docId: insightsDoc.id, payload })
+
       expect(response.status).toBe(200)
 
-      const data = await response.json()
-      expect(data).toMatchObject({
-        message: 'Hello from custom endpoint',
-      }) */
+      const updatedDoc = await payload.findByID({
+        id: insightsDoc.id,
+        collection: insightsSlug,
+        depth: 0,
+      })
+
+      const duplicateResponse = await fetchPluginEndpoint({ docId: insightsDoc.id, payload })
+      expect(duplicateResponse.status).toBe(200)
+      const { report: reportFromApi } = await duplicateResponse.json()
+
+      expect(reportFromApi).toBe(updatedDoc.report)
     })
   })
 
   describe('hooks', () => {
-    test.skip('should delete report doc when insight counterpart doc is deleted', async () => {
-      /* expect(payload.collections['plugin-collection']).toBeDefined()
+    test('should delete report doc when insight counterpart doc is deleted', async () => {
+      const {
+        docs: [insightDoc],
+      } = await payload.find({
+        collection: insightsSlug,
+        depth: 0,
+        limit: 1,
+        where: {
+          title: {
+            equals: 'Seeded by plugin',
+          },
+        },
+      })
 
-      const { docs } = await payload.find({ collection: 'plugin-collection' })
+      expect(insightDoc).toBeTruthy()
+      expect(insightDoc.report).toBeTruthy()
 
-      expect(docs).toHaveLength(1) */
+      const reportDocId = insightDoc.report
+
+      const reportDoc = await payload.findByID({
+        id: reportDocId as string,
+        collection: reportsSlug,
+        depth: 0,
+      })
+
+      expect(reportDoc).toBeTruthy()
+
+      await payload.delete({
+        id: insightDoc.id,
+        collection: insightsSlug,
+        depth: 0,
+      })
+
+      const { docs: reportDocsAfterDelete } = await payload.find({
+        collection: reportsSlug,
+        depth: 0,
+        limit: 1,
+        where: {
+          id: {
+            equals: reportDocId,
+          },
+        },
+      })
+
+      expect(reportDocsAfterDelete).toHaveLength(0)
     })
 
-    test.skip('should populate insights doc title', async () => {})
+    test('should populate insights doc title', async () => {
+      const url = 'http://localhost:3000'
+      const strategy = PageSpeedStrategies.MOBILE
+
+      const insightsDoc = await payload.create({
+        collection: insightsSlug,
+        data: {
+          strategy: strategy.value,
+          url,
+        },
+        depth: 0,
+        select: { title: true },
+      })
+
+      expect(insightsDoc.title).toEqual(`${url} - ${strategy.label}`)
+    })
   })
 })
-
-async function login({ payload }: { payload: Payload }) {
-  return payload.login({
-    collection: 'users',
-    data: { email: devUser.email, password: devUser.password },
-  })
-}
-
-async function fetchReportEndpoint({
-  docId,
-  mockRequestFn = true,
-  payload,
-  req: reqFromProps,
-  unauthenticated = false,
-}: {
-  docId?: number | string
-  mockRequestFn?: boolean
-  payload: Payload
-  req?: PayloadRequest
-  unauthenticated?: boolean
-}) {
-  const { token } = unauthenticated ? {} : await login({ payload })
-  const serverURL = process.env.SERVER_URL || 'http://localhost:3000'
-  const endpointURL = `${serverURL}/api/pagespeed-insights${typeof docId !== 'undefined' ? `/${docId}` : ''}/report`
-
-  const request = new Request(endpointURL, {
-    headers: unauthenticated
-      ? {}
-      : {
-          Authorization: `Bearer ${token}`,
-        },
-    method: 'GET',
-  })
-
-  const req = reqFromProps ? reqFromProps : await createPayloadRequest({ config, request })
-
-  return pageSpeedEndpointHandler({
-    fetchReportFn: mockRequestFn
-      ? getMockFetchReportFn({ filePath: './mock-report-desktop.json' })
-      : undefined,
-    insightsSlug,
-    pluginConfig: { apiKey: '' },
-    reportsSlug,
-    req,
-  })
-}
