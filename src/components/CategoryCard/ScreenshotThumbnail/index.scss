@@ -1,0 +1,15 @@
+@layer payload-default {
+  .psi-screenshot-thumbnail {
+    display: flex;
+    justify-content: center;
+    
+    &__img {
+      border: 1px solid var(--theme-elevation-200);
+      padding: calc(var(--base) / 4);
+    }
+
+    &--auto-w {
+      width: auto;
+    }
+  }
+}

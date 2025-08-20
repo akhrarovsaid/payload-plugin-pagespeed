@@ -1,0 +1,30 @@
+@import '~@payloadcms/ui/scss';
+
+@layer payload-default {
+  .psi-category-card {
+    padding-block: calc(var(--base) * 2);
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &__overview {
+      align-items: center;
+      display: grid;
+      gap: var(--base);
+      grid-template-columns: 1fr 1fr;
+      place-content: center;
+      width: 100%;
+
+      &--center {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @include small-break {
+      &__overview {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

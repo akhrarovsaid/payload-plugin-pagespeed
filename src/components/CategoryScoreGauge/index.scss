@@ -1,0 +1,80 @@
+@layer payload-default {
+  .psi-score-gauge {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--base) / 1.2);
+    text-align: center;
+
+    &__container {
+      width: calc(var(--base) * 4.8);
+      height: calc(var(--base) * 4.8);
+    }
+
+    &__score-container {
+      position: relative;
+      isolation: isolate;
+    }
+
+    &--large {
+      gap: var(--base);
+    }
+
+    &--large > &__container {
+      width: calc(var(--base) * 8);
+      height: calc(var(--base) * 8);
+    }
+
+    &__score-outer-wrap {
+      position: absolute;
+      inset: 0;
+    }
+
+    &__score-inner-wrap {
+      align-items: center;
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      width: 100%;
+    }
+
+    &__svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    &__label-container {
+      height: auto;
+    }
+
+    &__label {
+      text-align: center;
+    }
+
+    &--large &__score {
+      font-size: calc(var(--base) * 1.4);
+      font-weight: 600;
+    }
+
+    &__description, &__description-manual {
+      color: var(--theme-elevation-800); 
+      margin-bottom: calc(var(--base) * 0.5);
+      max-width: 60ch;
+    }
+
+    &__progress {
+      stroke-dasharray: var(--circumference);
+      stroke-dashoffset: var(--offset);
+      animation: gauge-spin-in 1s ease-out forwards;
+    }
+
+    @keyframes gauge-spin-in {
+      from {
+        stroke-dashoffset: var(--circumference);
+      }
+      to {
+        stroke-dashoffset: var(--offset);
+      }
+    }
+  }
+}

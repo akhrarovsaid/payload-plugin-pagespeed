@@ -1,0 +1,40 @@
+@import '~@payloadcms/ui/scss';
+
+@layer payload-default {
+  .psi-url-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--base) / 4);
+
+    &__link {
+      display: inline-flex;
+      text-decoration-style: dotted;
+
+      &:hover, &:focus, &:focus-within {
+        text-decoration-style: solid;
+      }
+    }
+
+    &__label {
+      max-width: 50ch;
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      direction: rtl;
+      text-align: left;
+    }
+
+    &__host {
+      display: inline-block;
+      color: var(--theme-elevation-600);
+    }
+
+    @mixin small-break {
+      &__label {
+        white-space: wrap;
+        max-width: 25ch;
+      }
+    }
+  }
+}

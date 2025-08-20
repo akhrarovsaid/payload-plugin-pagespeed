@@ -1,0 +1,40 @@
+@layer payload-default {
+  .psi-indicators {
+    align-items: center;
+    color: var(--theme-elevation-800);
+    display: flex;
+    gap: calc(var(--base) * 2);
+    padding-block: calc(var(--base) / 4);
+    justify-content: center;
+    flex-wrap: wrap;
+
+    &__indicator {
+      align-items: center; 
+      display: flex; 
+      gap: var(--base);
+    }
+
+    &__indicator-label {
+      margin: 0;
+    }
+  }
+
+  .psi-indicators__svg {
+    display: block;
+    height: calc(var(--base) * 0.75);
+    width: calc(var(--base) * 0.75);
+    flex-shrink: 0;
+  }
+
+  .psi-indicators__circle {
+    fill: var(--psi-success);
+  }
+
+  .psi-indicators__square {
+    fill: var(--psi-info);
+  }
+
+  .psi-indicators__triangle {
+    fill: var(--psi-error);
+  }
+}

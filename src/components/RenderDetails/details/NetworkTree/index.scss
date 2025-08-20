@@ -1,0 +1,49 @@
+@layer payload-default {
+  .psi-network-tree {
+    display: inline;
+    overflow-x: auto;
+    max-width: 100%;
+    min-width: 0;
+
+    &__node {
+      padding-left: calc(var(--base));
+      position: relative;
+      isolation: isolate;
+      z-index: 0;
+
+      &__label {
+        color: inherit;
+      }
+
+      &--root {
+        padding-left: 0;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 20px;
+          left: 5px;
+          bottom: 10px;
+          width: 1px;
+          background: var(--theme-elevation-300);
+          z-index: 2;
+        }
+      }
+
+      &--longest > &__label {
+        color: var(--psi-red);
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 5px;
+        width: 10px;
+        height: 1px;
+        background: var(--theme-elevation-300);
+        z-index: 1;
+      }
+    }
+  }
+}

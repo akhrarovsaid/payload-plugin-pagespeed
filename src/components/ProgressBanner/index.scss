@@ -1,0 +1,12 @@
+@import '~@payloadcms/ui/scss';
+
+@layer payload-default {
+  .psi-progress-banner {
+    position: relative;
+    min-height: calc(var(--base) * 10);
+
+    .loading-overlay.loading-overlay--absolute {
+      position: absolute;
+    }
+  }
+}

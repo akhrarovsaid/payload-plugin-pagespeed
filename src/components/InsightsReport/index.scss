@@ -1,0 +1,18 @@
+@import '~@payloadcms/ui/scss';
+
+@layer payload-default {
+  .psi-report {
+    --psi-green: #24df6c;
+    --psi-orange: var(--theme-warning-400);
+    --psi-red: var(--theme-error-400);
+
+    display: flex;
+    flex-direction: column; 
+    gap: calc(var(--base) * 1.5);
+  }
+
+  html[data-theme='dark'] .psi-report {
+    --psi-orange: var(--theme-warning-600);
+    --psi-red: var(--theme-error-600);
+  }
+}

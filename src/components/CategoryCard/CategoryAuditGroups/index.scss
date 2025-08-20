@@ -1,0 +1,62 @@
+@import '~@payloadcms/ui/scss';
+
+@layer payload-default {
+  .psi-audit-groups {
+    display: flex;
+    flex-direction: column;
+
+    &__group {
+      &--hidden {
+        order: 1;
+      }
+    }
+
+    &__group-title {
+      text-transform: capitalize;
+    }
+
+    &__group-audits {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      grid-template-columns: none;
+
+      &--expanded {
+        display: grid;
+        gap: var(--base);
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      }
+    }
+
+    &__score {
+      font-size: calc(var(--base) * 1.5);
+      line-height: calc(var(--base) * 1.5);
+      color: var(--theme-elevation-600);
+
+      &-green {
+        color: var(--psi-green);
+      }
+      &-orange {
+        color: var(--psi-orange);
+      }
+      &-red {
+        color: var(--psi-red);
+      }
+    }
+
+    &__group-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: calc(var(--base) / 2);
+      margin-top: calc(var(--base) * 2);
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    @include small-break {
+      &__group-audits--expanded {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
