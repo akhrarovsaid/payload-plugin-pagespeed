@@ -14,7 +14,7 @@ let payload: Payload
 /**
  * TODO: Better test coverage
  */
-describe('Plugin integration tests', () => {
+describe('payload-plugin-pagespeed', () => {
   beforeAll(async () => {
     payload = await getPayload({ config })
   })
