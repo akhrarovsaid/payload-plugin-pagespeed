@@ -6,6 +6,7 @@ import { pageSpeedPlugin } from 'payload-plugin-pagespeed'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { devUser } from './helpers/credentials.js'
 import { testEmailAdapter } from './helpers/testEmailAdapter.js'
 /* import { getMemoryDB } from './helpers/getMemoryDB.js' */
 import { seed } from './seed.js'
