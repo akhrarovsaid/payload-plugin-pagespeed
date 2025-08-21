@@ -15,6 +15,8 @@ on:
 env:
   DO_NOT_TRACK: 1 # Disable Turbopack telemetry
   NEXT_TELEMETRY_DISABLED: 1 # Disable Next telemetry
+  DATABASE_URI: mongodb://localhost:27017/payload-plugin-pagespeed
+  NODE_ENV: test
 
 jobs:
   integration:
@@ -30,10 +32,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
-    env:
-      DATABASE_URL: mongodb://localhost:27017/payload-plugin-pagespeed
-      NODE_ENV: test
 
     steps:
       - uses: actions/checkout@v4
