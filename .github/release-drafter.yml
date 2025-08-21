@@ -1,0 +1,36 @@
+name-template: "Release v$NEXT_PATCH_VERSION"
+tag-template: "v$NEXT_PATCH_VERSION"
+
+categories:
+  - title: ✨ Features
+    labels: [feat, feature]
+  - title: 🐛 Fixes
+    labels: [fix, bugfix, bug]
+  - title: 📦 Maintenance
+    labels: [chore, deps, dependencies, refactor, style]
+  - title: 🧪 Tests
+    labels: [test, testing]
+  - title: 📖 Docs
+    labels: [docs, documentation]
+  - title: ⚡ CI/CD
+    labels: [ci, build]
+
+change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
+change-title-escapes: '\<*_&' # allow markdown formatting
+
+template: |
+  ## 🎉 New in v$NEXT_PATCH_VERSION
+
+  $CHANGES
+
+  ---
+
+  ### 🙌 Contributors
+  Thanks to everyone who contributed to this release:
+
+  $CONTRIBUTORS
+
+  ### 📦 Installation & Upgrade
+  ```bash
+  npm install your-package@$NEXT_PATCH_VERSION
+  ```
