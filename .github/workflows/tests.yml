@@ -7,6 +7,9 @@ on:
       - reopened
       - synchronize
       - labeled
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
 
   push:
     branches:
