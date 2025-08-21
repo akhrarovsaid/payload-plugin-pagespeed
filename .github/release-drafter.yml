@@ -1,5 +1,5 @@
-name-template: "Release v$NEXT_PATCH_VERSION"
-tag-template: "v$NEXT_PATCH_VERSION"
+name-template: "Release v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
 
 categories:
   - title: ✨ Features
@@ -15,15 +15,25 @@ categories:
   - title: ⚡ CI/CD
     labels: [ci, build]
 
-change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
+change-template: "- $TITLE (#$NUMBER)"
 change-title-escapes: '\<*_&' # allow markdown formatting
 
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch
+
 template: |
-  ## 🎉 New in v$NEXT_PATCH_VERSION
+  ## 🎉 New in v$RESOLVED_VERSION
 
   $CHANGES
-
-  ---
 
   ### 🙌 Contributors
   Thanks to everyone who contributed to this release:
@@ -32,5 +42,5 @@ template: |
 
   ### 📦 Installation & Upgrade
   ```bash
-  npm install your-package@$NEXT_PATCH_VERSION
+  pnpm install payload-plugin-pagespeed@$RESOLVED_VERSION
   ```
