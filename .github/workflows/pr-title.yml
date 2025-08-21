@@ -6,6 +6,10 @@ on:
       - opened
       - edited
 
+permissions:
+  pull-requests: read
+  statuses: write
+
 jobs:
   main:
     name: lint-pr-title
