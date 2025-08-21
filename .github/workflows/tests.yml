@@ -19,8 +19,8 @@ env:
   NODE_ENV: test
 
 jobs:
-  integration:
-    runs-on: ubuntu-latest
+  tests-int:
+    runs-on: ubuntu-24.04
 
     services:
       mongo:
@@ -60,8 +60,8 @@ jobs:
       - name: Run integration tests
         run: pnpm test:int
 
-  e2e:
-    runs-on: ubuntu-latest
+  tests-e2e:
+    runs-on: ubuntu-24.04
 
     services:
       mongo:
@@ -106,7 +106,7 @@ jobs:
           key: ${{ runner.os }}-playwright
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Start dev server
         run: pnpm dev &
@@ -126,3 +126,15 @@ jobs:
 
       - name: Run e2e tests
         run: pnpm test:e2e
+
+  all-green:
+    name: All Green
+    if: always()
+    runs-on: ubuntu-24.04
+    needs:
+      - tests-int
+      - tests-e2e
+    
+    steps:
+      - if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) }}
+        run: exit 1
