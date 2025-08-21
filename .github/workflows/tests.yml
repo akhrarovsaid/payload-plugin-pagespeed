@@ -73,10 +73,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
-    env:
-      DATABASE_URL: mongodb://localhost:27017/payload-plugin-pagespeed
-      NODE_ENV: test
 
     steps:
       - uses: actions/checkout@v4
@@ -102,6 +98,15 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - run: pnpm i --frozen-lockfile
+
+      - name: Restore Playwright cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
 
       - name: Start dev server
         run: pnpm dev &
