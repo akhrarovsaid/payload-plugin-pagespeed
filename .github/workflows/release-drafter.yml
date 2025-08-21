@@ -1,0 +1,21 @@
+# .github/workflows/release-drafter.yml
+name: release-drafter
+
+on:
+  push:
+    branches:
+      - main   # only update the draft when main changes
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-release-draft:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: release-drafter/release-drafter@v6
+        with:
+          config-name: release-drafter.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
