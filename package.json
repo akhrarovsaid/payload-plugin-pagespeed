@@ -1,6 +1,6 @@
 {
   "name": "payload-plugin-pagespeed",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "A tiny PageSpeed Insights API plugin for PayloadCMS",
   "license": "MIT",
   "type": "module",

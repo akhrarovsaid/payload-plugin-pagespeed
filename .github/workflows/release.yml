@@ -2,6 +2,12 @@ name: release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   release:
@@ -34,11 +40,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
-
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }} # fine-grained PAT with Contents: write + Metadata: read
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}      # if you publish to npm
-        run: npx semantic-release --dry-run
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            npx semantic-release --dry-run
+          else
+            npx semantic-release
+          fi
