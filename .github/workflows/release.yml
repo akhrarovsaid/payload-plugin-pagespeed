@@ -64,9 +64,9 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.RELEASE_PAT }}
-          commit-message: "chore: bump ${{ steps.next_version.outputs.new-release-git-tag }} [skip ci]"
+          commit-message: "chore: bump release to ${{ steps.next_version.outputs.new-release-git-tag }} [skip ci]"
           branch: release/${{ steps.next_version.outputs.new-release-version }}
-          title: "Release ${{ steps.next_version.outputs.new-release-version }}"
+          title: "chore: bump release to ${{ steps.next_version.outputs.new-release-git-tag }} [skip ci]"
           body: "This PR bumps the package version to ${{ steps.next_version.outputs.new-release-version }}."
           base: main
           labels: release
