@@ -4,6 +4,8 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 
+import type { PagespeedReport } from '../../payload-types.js'
+
 import { PageSpeedStrategies } from '../../../src/utilities/pageSpeedStrategies.js'
 import { insightsSlug, reportsSlug } from '../../helpers/defaults.js'
 import { seed } from '../../seed.js'
@@ -85,11 +87,7 @@ describe('payload-plugin-pagespeed', () => {
         },
         depth: 0,
       })
-
-      expect(insightsDoc).toBeTruthy()
-
       const response = await fetchPluginEndpoint({ docId: insightsDoc.id, payload })
-
       expect(response.status).toBe(200)
 
       const updatedDoc = await payload.findByID({
@@ -169,6 +167,29 @@ describe('payload-plugin-pagespeed', () => {
       })
 
       expect(insightsDoc.title).toEqual(`${url} - ${strategy.label}`)
+    })
+
+    test('should generate a file name when function is present in plugin config', async () => {
+      const insightsDoc = await payload.create({
+        collection: insightsSlug,
+        data: {
+          url: 'http://localhost:3000',
+        },
+        depth: 0,
+      })
+      const response = await fetchPluginEndpoint({ docId: insightsDoc.id, payload })
+      expect(response.status).toBe(200)
+      const updatedDoc = await payload.findByID({
+        id: insightsDoc.id,
+        collection: insightsSlug,
+        depth: 1,
+      })
+      const report = updatedDoc.report as PagespeedReport
+      expect(report.filename).toBe('test-report.json')
+    })
+
+    test.skip('should generate a file prefix when function is present in plugin config', async () => {
+      // TODO: Requires storage adapter
     })
   })
 })

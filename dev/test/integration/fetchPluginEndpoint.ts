@@ -6,6 +6,7 @@ import { createPayloadRequest } from 'payload'
 import { fetchPageSpeedReport } from '../../../src/endpoints/pagespeed/fetchPageSpeedReport.js'
 import { pageSpeedEndpointHandler } from '../../../src/endpoints/pagespeed/handler.js'
 import { insightsSlug, reportsSlug } from '../../helpers/defaults.js'
+import { pageSpeedPluginConfig } from '../../plugins.js'
 import { getMockFetchReportFn } from '../mock/fetchReport.js'
 import { login } from './login.js'
 
@@ -52,7 +53,7 @@ export async function fetchPluginEndpoint({
       ? getMockFetchReportFn({ filePath: './mock-report-desktop.json' })
       : fetchPageSpeedReport,
     insightsSlug,
-    pluginConfig: { apiKey },
+    pluginConfig: { ...pageSpeedPluginConfig, apiKey },
     reportsSlug,
     req,
   })
