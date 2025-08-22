@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-24.04
 
     permissions:
-      contents: write      # required for creating a release
-      id-token: write      # required for npm provenance
-      packages: write
+      contents: write
+      id-token: write
+      pull-requests: read
 
     steps:
       - uses: actions/checkout@v4
@@ -31,37 +31,8 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Get release version
-        id: drafter
-        uses: release-drafter/release-drafter@v6
-        with:
-          config-name: release-drafter.yml
-          disable-autolabeler: true
+      - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Bump version and create tag
-        run: |
-          VERSION=${{ steps.drafter.outputs.resolved_version }}
-          echo "version for release: $VERSION"
-          pnpm version --no-git-tag-version $VERSION
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json pnpm-lock.yaml
-          git commit -m "chore: release v$VERSION"
-          # git tag $VERSION
-          # git push origin HEAD --tags
-
-      - name: Publish to npm
-        run: |
-          # pnpm publish --access public
-          pnpm publish --dry-run --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish GitHub Release
-        uses: release-drafter/release-drafter@v6
-        with:
-          publish: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }} # fine-grained PAT with Contents: write + Metadata: read
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}      # if you publish to npm
+        run: npx semantic-release --dry-run
