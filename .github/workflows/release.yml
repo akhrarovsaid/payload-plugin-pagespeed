@@ -25,6 +25,13 @@ jobs:
         with:
           version: 9
 
+      - name: Create .npmrc
+        run: |
+          echo "registry=https://registry.npmjs.org/" > .npmrc
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - run: pnpm install --frozen-lockfile
 
       - name: Build
