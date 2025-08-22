@@ -14,6 +14,7 @@ import { gzip } from 'zlib'
 import type { PageSpeedPluginConfig } from '../../types/index.js'
 import type { FetchPageSpeedReportFn } from './fetchPageSpeedReport.js'
 
+import { defaultGenerateFileName } from '../../utilities/defaultGenerateFileName.js'
 import { extractQueryFromSource } from '../../utilities/extractQueryFromSource.js'
 import { fetchPageSpeedReport } from './fetchPageSpeedReport.js'
 
@@ -126,19 +127,20 @@ export const pageSpeedEndpointHandler = async ({
   let reportDoc: TypeWithID | undefined = undefined
   if (hasExistingDoc) {
     try {
-      const timestamp = report['analysisUTCTimestamp']
+      const analysisTimestamp = report['analysisUTCTimestamp']
       const requestedUrl = report['id']
+      const fileName =
+        typeof pluginConfig.generateFileName === 'function'
+          ? pluginConfig.generateFileName({ analysisTimestamp, requestedUrl })
+          : defaultGenerateFileName({ analysisTimestamp, requestedUrl })
+
       const uploadBuffer: Buffer = await gzipPromise(Buffer.from(JSON.stringify(report)))
 
       reportDoc = await payload.create({
         collection: reportsSlug,
         data: {},
         file: {
-          name:
-            `${timestamp || new Date().toUTCString()}_${requestedUrl || reportsSlug}`.replace(
-              /[:/.]+/g,
-              '-',
-            ) + '.json',
+          name: fileName,
           data: uploadBuffer,
           mimetype: 'application/json',
           size: uploadBuffer.length,

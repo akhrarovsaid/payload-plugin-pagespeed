@@ -2,11 +2,11 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { pageSpeedPlugin } from 'payload-plugin-pagespeed'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 import { testEmailAdapter } from './helpers/testEmailAdapter.js'
+import { plugins } from './plugins.js'
 /* import { getMemoryDB } from './helpers/getMemoryDB.js' */
 import { seed } from './seed.js'
 
@@ -51,12 +51,7 @@ const buildConfigWithMemoryDB = async () => {
     onInit: async (payload) => {
       await seed(payload)
     },
-    plugins: [
-      pageSpeedPlugin({
-        apiKey: process.env.PAGESPEED_API_KEY || 'fake-api-key',
-        debug: true,
-      }),
-    ],
+    plugins,
     secret: process.env.PAYLOAD_SECRET || 'test-secret_key',
     sharp,
     typescript: {

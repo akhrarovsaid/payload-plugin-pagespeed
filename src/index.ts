@@ -22,3 +22,5 @@ export const pageSpeedPlugin =
 
     return config
   }
+
+export { PageSpeedPluginConfig }
