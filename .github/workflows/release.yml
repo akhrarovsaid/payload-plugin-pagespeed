@@ -50,7 +50,7 @@ jobs:
           git commit -m "chore: release bump version to $VERSION"
           # git tag $VERSION
           # git push origin HEAD --tags
-          echo $VERSION
+          echo "version for release: $VERSION"
 
       - name: Publish to npm
         run: |
