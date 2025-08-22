@@ -72,7 +72,7 @@ jobs:
           labels: release
 
       - name: Enable Pull Request Automerge
-        run: gh pr merge ${{ steps.release_pr.outputs.pull-request-number }} --merge --auto --squash
+        run: gh pr merge ${{ steps.release_pr.outputs.pull-request-number }} --squash --auto
         if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
