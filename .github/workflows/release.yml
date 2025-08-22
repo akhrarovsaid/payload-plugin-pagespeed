@@ -43,6 +43,7 @@ jobs:
       - name: Bump version and create tag
         run: |
           VERSION=${{ steps.drafter.outputs.tag_name }}
+          echo "version for release: $VERSION"
           pnpm version --no-git-tag-version $VERSION
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -50,7 +51,6 @@ jobs:
           git commit -m "chore: release bump version to $VERSION"
           # git tag $VERSION
           # git push origin HEAD --tags
-          echo "version for release: $VERSION"
 
       - name: Publish to npm
         run: |
