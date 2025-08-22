@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main   # only update the draft when main changes
+  workflow_dispatch:
 
 permissions:
   contents: write
