@@ -50,28 +50,19 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
-
       - name: Determine next version
         id: next_version
-        run: |
-          node -e "
-            const semanticRelease = require('semantic-release');
-            semanticRelease({ dryRun: true, noCi: true })
-              .then(result => {
-                if(result && result.nextRelease) {
-                  console.log('::set-output name=version::' + result.nextRelease.version);
-                } else {
-                  console.log('::set-output name=version::');
-                }
-              });
-          "
+        run: npx semantic-release --dry-run
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+
+      - name: Build
+        run: pnpm build
 
       - name: Bump version files
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
-          npm version ${{ steps.next_version.outputs.version }} --no-git-tag-version
+          npm version ${{ steps.next_version.outputs.new-release-version }} --no-git-tag-version
           pnpm install --frozen-lockfile
 
       - name: Create Release PR
@@ -80,10 +71,10 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.RELEASE_PAT }}
-          commit-message: "chore: bump version to ${{ steps.next_version.outputs.version }} [skip ci]"
-          branch: release/${{ steps.next_version.outputs.version }}
-          title: "Release ${{ steps.next_version.outputs.version }}"
-          body: "This PR bumps the package version to ${{ steps.next_version.outputs.version }}."
+          commit-message: "chore: bump version to ${{ steps.next_version.outputs.new-release-git-tag }} [skip ci]"
+          branch: release/${{ steps.next_version.outputs.new-release-version }}
+          title: "Release ${{ steps.next_version.outputs.new-release-version }}"
+          body: "This PR bumps the package version to ${{ steps.next_version.outputs.new-release-version }}."
           base: main
           labels: release
 

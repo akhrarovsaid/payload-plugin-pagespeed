@@ -107,6 +107,9 @@ importers:
       semantic-release:
         specifier: ^24.2.7
         version: 24.2.7(typescript@5.7.3)
+      semantic-release-export-data:
+        specifier: ^1.1.1
+        version: 1.1.1(semantic-release@24.2.7(typescript@5.7.3))
       sharp:
         specifier: 0.34.2
         version: 0.34.2
@@ -5550,6 +5553,11 @@ packages:
   seek-bzip@2.0.0:
     resolution: {integrity: sha512-SMguiTnYrhpLdk3PwfzHeotrcwi8bNV4iemL9tx9poR/yeaMYwB9VzR1w7b57DuWpuqR8n6oZboi0hj3AxZxQg==}
     hasBin: true
+
+  semantic-release-export-data@1.1.1:
+    resolution: {integrity: sha512-cjhc6g7Vl4tRRD6eA593EyMiQaOvazsziabdzPqsf0OAKoIQSL2eynS2jaJhbdxiu4msZreZ+XcU5FU9FAZbeA==}
+    peerDependencies:
+      semantic-release: '>=18'
 
   semantic-release@24.2.7:
     resolution: {integrity: sha512-g7RssbTAbir1k/S7uSwSVZFfFXwpomUB9Oas0+xi9KStSCmeDXcA7rNhiskjLqvUe/Evhx8fVCT16OSa34eM5g==}
@@ -12879,6 +12887,10 @@ snapshots:
   seek-bzip@2.0.0:
     dependencies:
       commander: 6.2.1
+
+  semantic-release-export-data@1.1.1(semantic-release@24.2.7(typescript@5.7.3)):
+    dependencies:
+      semantic-release: 24.2.7(typescript@5.7.3)
 
   semantic-release@24.2.7(typescript@5.7.3):
     dependencies:
