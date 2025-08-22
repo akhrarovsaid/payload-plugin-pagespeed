@@ -53,7 +53,38 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Release
+      - name: Determine next version
+        id: next_version
+        run: |
+          NEXT_VERSION=$(npx semantic-release --dry-run --no-ci | grep "The next release version is" | awk '{print $6}')
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+          echo "Next version: $NEXT_VERSION"
+
+      - name: Bump version files
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          npm version $NEXT_VERSION --no-git-tag-version
+          pnpm install --frozen-lockfile
+
+      - name: Create Release PR
+        id: release_pr
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
+          commit-message: "chore: bump version to $NEXT_VERSION [skip ci]"
+          branch: release/$NEXT_VERSION
+          title: "Release $NEXT_VERSION"
+          body: "This PR bumps the package version to $NEXT_VERSION."
+          base: main
+          labels: release
+
+      - name: Enable Pull Request Automerge
+        run: gh pr merge ${{ steps.release_pr.outputs.pull-request-number }} --merge --auto
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+
+      - name: Publish release
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
