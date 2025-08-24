@@ -71,6 +71,7 @@
     "@payloadcms/next": "3.50.0",
     "@payloadcms/richtext-lexical": "3.50.0",
     "@payloadcms/storage-s3": "3.50.0",
+    "@payloadcms/translations": "3.50.0",
     "@payloadcms/ui": "3.50.0",
     "@playwright/test": "^1.52.0",
     "@semantic-release/git": "^10.0.1",
