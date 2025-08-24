@@ -1,6 +1,7 @@
+import type { TFunction } from '@payloadcms/translations'
 import type { Data, JsonObject } from 'payload'
 
-import { useField, useTranslation } from '@payloadcms/ui'
+import { useConfig, useField, useTranslation } from '@payloadcms/ui'
 import { useEffect, useRef, useState } from 'react'
 
 import type { PageSpeedReportObject } from '../types/pagespeed.js'
@@ -28,6 +29,11 @@ export function useReportData({
   reportDoc: reportDocFromProps,
 }: Args) {
   const { value: reportDocValue } = useField<JsonObject>({ path })
+  const {
+    config: {
+      routes: { api: apiRoute },
+    },
+  } = useConfig()
   const { t } = useTranslation()
 
   const [state, setState] = useState<ReportState>({ status: 'loading' })
@@ -46,10 +52,12 @@ export function useReportData({
       setState({ status: 'loading' })
       try {
         const report = await fetchReportDoc({
+          apiRoute,
           collectionSlug,
           doc,
           relationTo,
           reportDoc: reportDocValue || reportDocFromProps,
+          t: t as TFunction,
         })
         setState({ report, status: 'success' })
       } catch (err) {
