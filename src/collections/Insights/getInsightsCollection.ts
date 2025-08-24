@@ -3,6 +3,7 @@ import type { CollectionConfig, Endpoint } from 'payload'
 import type { PageSpeedPluginConfig } from '../../types/index.js'
 
 import { getPageSpeedEndpoint } from '../../endpoints/pagespeed/index.js'
+import { urlField } from '../../fields/url/index.js'
 import { PageSpeedCategories } from '../../utilities/pageSpeedCategories.js'
 import { PageSpeedStrategies } from '../../utilities/pageSpeedStrategies.js'
 import { getDeleteReportHook } from './hooks/getDeleteReportHook.js'
@@ -79,14 +80,12 @@ export function getInsightsCollection({ pluginConfig, reportsSlug }: Args): Coll
           },
           {
             fields: [
-              {
-                name: 'url',
-                type: 'text',
+              urlField({
                 admin: {
                   description: 'The URL to fetch and analyze.',
                 },
                 required: true,
-              },
+              }),
               {
                 name: 'categories',
                 type: 'select',
