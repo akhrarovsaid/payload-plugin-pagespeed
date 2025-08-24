@@ -14,7 +14,7 @@ type QueryArgs = {
   locale?: string
   strategy?: PageSpeedStrategy
   url: string
-  // These use snakecase for easier query interop with psi api
+  // These use snakecase for easier query interop with PageSpeed Insights api
   utm_campaign?: string
   utm_source?: string
 }
@@ -30,12 +30,21 @@ export function extractQueryFromSource({ doc, req }: Args): string {
     } as QueryArgs
   }
 
-  return Object.entries(queryArgs)
-    .filter(([_, value]) => typeof value !== 'undefined')
-    .map(([key, value]) =>
-      key === 'categories'
-        ? `category=${(value as string[]).join('&category=')}`
-        : `${key}=${value as string}`,
-    )
-    .join('&')
+  const params = new URLSearchParams()
+
+  for (const [key, value] of Object.entries(queryArgs)) {
+    if (typeof value === 'undefined') {
+      continue
+    }
+
+    if (key === 'categories' && Array.isArray(value)) {
+      for (const v of value) {
+        params.append('category', v)
+      }
+    } else {
+      params.append(key, String(value as string))
+    }
+  }
+
+  return params.toString()
 }

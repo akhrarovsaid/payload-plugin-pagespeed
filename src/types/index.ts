@@ -1,9 +1,4 @@
-import type {
-  CollectionConfig,
-  CollectionSlug,
-  PayloadRequest,
-  SanitizedCollectionConfig,
-} from 'payload'
+import type { CollectionConfig, PayloadRequest, SanitizedCollectionConfig } from 'payload'
 
 export type CollectionOverride = (collection: CollectionConfig) => CollectionConfig
 
@@ -22,10 +17,6 @@ export type GenerateFilePrefixFn = (args: GenerateFilePrefixFnArgs) => string
 
 export type PageSpeedPluginConfig = {
   apiKey: string
-  /**
-   * List of collections to add a custom field
-   */
-  collections?: Partial<Record<CollectionSlug, true>>
   debug?: boolean
   disabled?: boolean
   generateFileName?: GenerateFileNameFn
