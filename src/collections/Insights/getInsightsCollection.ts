@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Endpoint } from 'payload'
 
 import type { PageSpeedPluginConfig } from '../../types/index.js'
 
@@ -23,6 +23,18 @@ export function getInsightsCollection({ pluginConfig, reportsSlug }: Args): Coll
   const pageSpeedStrategyOptions = Object.values(PageSpeedStrategies)
   const slug = 'pagespeed-insights'
 
+  const endpoints: Endpoint[] = []
+
+  if (!pluginConfig.disabled) {
+    endpoints.push(
+      getPageSpeedEndpoint({
+        insightsSlug: slug,
+        pluginConfig,
+        reportsSlug,
+      }),
+    )
+  }
+
   const collection: CollectionConfig = {
     slug,
     access: {
@@ -42,13 +54,7 @@ export function getInsightsCollection({ pluginConfig, reportsSlug }: Args): Coll
       ],
       useAsTitle: 'title',
     },
-    endpoints: [
-      getPageSpeedEndpoint({
-        insightsSlug: slug,
-        pluginConfig,
-        reportsSlug,
-      }),
-    ],
+    endpoints,
     fields: [
       {
         type: 'tabs',
