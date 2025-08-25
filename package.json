@@ -1,6 +1,6 @@
 {
   "name": "payload-plugin-pagespeed",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Payload CMS plugin that integrates PageSpeed Insights into your project.",
   "author": {
     "name": "Said Akhrarov",
