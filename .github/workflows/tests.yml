@@ -111,22 +111,6 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps
 
-      - name: Start dev server
-        run: pnpm dev &
-
-      - name: Wait for server to be ready
-        run: |
-          for i in {1..30}; do
-            if curl -s http://localhost:3000 > /dev/null; then
-              echo "Server is ready"
-              exit 0
-            fi
-            echo "Waiting for server... ($i/30)"
-            sleep 3
-          done
-          echo "Server failed to start in time"
-          exit 1
-
       - name: Run e2e tests
         run: pnpm test:e2e
 
