@@ -140,6 +140,5 @@
       "sharp",
       "unrs-resolver"
     ]
-  },
-  "registry": "https://registry.npmjs.org/"
+  }
 }
